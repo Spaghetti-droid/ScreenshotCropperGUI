@@ -2,16 +2,21 @@ package fun.gbr.gui;
 
 import java.awt.EventQueue;
 import java.nio.file.InvalidPathException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import fun.gbr.gui.config.ConfigManager;
 
@@ -52,6 +57,12 @@ public class ConfigGUI {
 	 */
 	private void initialize() {
 		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			Logger.getLogger(this.getClass().getCanonicalName()).log(Level.WARNING, e1, () -> "Look and feel failed to initialise! Using default.");
+		}
 		ConfigManager manager = new ConfigManager();
 		
 		frame = new JFrame();
@@ -65,7 +76,15 @@ public class ConfigGUI {
 		pathField.setColumns(10);
 		pathField.setText(manager.getPath());
 		
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		JButton browseButton = new JButton("Browse");
+		browseButton.addActionListener(event -> {
+			int ret = fileChooser.showOpenDialog(frame);
+			if(ret == JFileChooser.APPROVE_OPTION) {
+				pathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+			}
+		});
 		
 		JLabel xOffsetLabel = new JLabel("X Offset");
 		

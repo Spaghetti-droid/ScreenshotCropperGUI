@@ -1,1 +1,1 @@
-javaw -jar ScreenshotCropperGUI.jar
+start javaw -jar ScreenshotCropperGUI.jar
